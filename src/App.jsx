@@ -1,26 +1,15 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 import reactLogo from './assets/react.svg'
-import { Button, Card, Container, Row } from 'react-bootstrap'
+import axios from 'axios'
+import { Button, Card, Col, Container, Row } from 'react-bootstrap';
 import './App.css'
 import Hello from './components/hello'
 
 function App() {
-
+  // Default
   const [count, setCount] = useState(0);
-  const [joke, setJoke] = useState();
 
-  const getJoke = async () => {
-    const url = 'https://api.chucknorris.io/jokes/random';
-    const response = await axios.get(url);
-    console.log('joke ', response);
-    setJoke(response.data);
-  }
-
-  useEffect(() => {
-    getJoke()
-  }, []);
-
+  // Arreglo
   const reservaciones = [
     {
       nombre: 'Fatima',
@@ -41,8 +30,23 @@ function App() {
 
   ]
 
+  // Api
+  const [joke, setJoke] = useState();
+
+  const getJoke = async () => {
+    const response = await axios('https://api.chucknorris.io/jokes/random')
+    console.log('joke', response)
+    // setJoke(response.data)
+  }
+
+  useEffect(() => {
+    getJoke()
+  }, []);
+
+
   return (
     <div className="App">
+      {/* Default */}
       <div>
         <a href="https://vitejs.dev" target="_blank">
           <img src="/vite.svg" className="logo" alt="Vite logo" />
@@ -65,38 +69,43 @@ function App() {
         Click on the Vite and React logos to learn more
       </p>
 
-        <Container>
-          <Row>
-          {
-            reservaciones.map((item, index) => (
-              <Card key={index} style={{ width: '18rem' }}>
-                <Card.Body>
-                  <Card.Title>Reservacion {item.nombre}</Card.Title>
-                  <Card.Subtitle className="mb-2 text-muted">{item.edad}</Card.Subtitle>
-                  <Card.Text>
-                    Some quick example text to build on the card title and make up the
-                    bulk of the card's content.
-                  </Card.Text>
-                  <Card.Link href="#">Card Link</Card.Link>
-                  <Card.Link href="#">Another Link</Card.Link>
-                </Card.Body>
-              </Card>
-            ))
-          }
-          </Row>
-        </Container>
-        <Container>
-        <Card>
-          <Card.Header>Chuk Norris API</Card.Header>
-          <Card.Body>
-            <Card.Title>Special title treatment</Card.Title>
-            <Card.Text>
-              With supporting text below as a natural lead-in to additional content.
-            </Card.Text>
-            <Button variant="primary">Go somewhere</Button>
-          </Card.Body>
-        </Card>
-        </Container>
+      {/* Arreglo */}
+      <Container>
+        <Row>
+        {
+          reservaciones.map((item, index) => (
+            <Card key={index} style={{ width: '18rem' }}>
+              <Card.Body>
+                <Card.Title>Reservacion {item.nombre}</Card.Title>
+                <Card.Subtitle className="mb-2 text-muted">{item.edad}</Card.Subtitle>
+                <Card.Text>
+                  Some quick example text to build on the card title and make up the
+                  bulk of the card's content.
+                </Card.Text>
+                <Card.Link href="#">Card Link</Card.Link>
+                <Card.Link href="#">Another Link</Card.Link>
+              </Card.Body>
+            </Card>
+          ))
+        }
+        </Row>
+      </Container>
+      
+      {/* Api */}
+      <Container>
+        <Row>
+          <Col>
+            <Card>
+              <Card.Body>
+                <Card.Text>
+                  La broma deberia estar aqui
+                </Card.Text>
+                <Button variant="primary">Go somewhere</Button>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      </Container>
     </div>
   )
 }
