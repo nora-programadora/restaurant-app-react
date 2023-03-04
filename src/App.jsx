@@ -3,11 +3,21 @@ import reactLogo from './assets/react.svg'
 import axios from 'axios'
 import { Button, Card, Col, Container, Row } from 'react-bootstrap';
 import './App.css'
+import {
+  onSnapshot,
+  collection,
+  addDoc,
+  doc,
+  deleteDoc,
+  setDoc,
+  updateDoc
+} from 'firebase/firestore';
+import { db } from './firebase';
 import Hello from './components/hello'
 
 function App() {
   // Default
-  const [count, setCount] = useState(0);
+  const [count, setCount] = useState();
 
   // Arreglo
   const reservaciones = [
@@ -39,13 +49,105 @@ function App() {
     // setJoke(response.data)
   }
 
-  useEffect(() => {
-    getJoke()
-  }, []);
+  // useEffect(() => {
+  //   getJoke()
+  // }, []);
 
+  // Crud firebase
+  const [products, setProducts] = useState([]);
+  const [form, setForm] = useState(null);
+
+  const getData = () => {
+    const arrData = [];
+
+    onSnapshot(collection(db, 'productos'), (snapshot) => {
+      snapshot.docs.forEach((item) => {
+        console.log('FIREBASE:', item.data())
+
+        arrData.push({
+          ...item.data(),
+          id: item.id
+        })
+
+        console.log(arrData);
+        setProducts(arrData);
+      })
+    })
+  }
+
+  // const createProduct = () => {
+  //   addDoc(collection(db, 'productos'), {
+  //     name: 'camiseta',
+  //     sku: '007',
+  //     price: '345',
+  //     descripcion: 'camiseta'
+  //   })
+  //   getData
+  // }
+
+  const createProduct = () => {
+    if(form) {
+      addDoc(collection(db, 'productos'), form)
+    } else {
+      alert('Algo salio mal con el form, esta vacio')
+    }
+    getData()
+  }
+
+
+  const handleChange = (ev) => {
+    setForm({
+      ...form,
+      [ev.name]: ev.value
+    })
+    console.log(form)
+  }
+
+  const onUpdate = async (id, name) => {
+    console.log(id, name)
+    const newFields = { name: name + ' actualizado '};
+    await updateDoc(doc(db, 'productos', id), newFields)
+    getData()
+  }
+
+
+  const onDelete = async (id) => {
+    console.log(id)
+    await deleteDoc(doc(db, 'productos', id))
+    getData()
+  }
+
+
+  useEffect(() => {
+    getData()
+  }, []);
 
   return (
     <div className="App">
+      {/* Firebase */}
+      <h1>Firebase</h1>
+      {/* {
+        products.map(item => <h3>{item.name}</h3>)
+      }
+      <button type="button" onClick={() => createProduct()}>Registrar</button> */}
+
+      <input type="text" placeholder='name' name='name' onChange={(e) => handleChange(e.target)} />
+      <input type="text" placeholder='sku' name='sku' onChange={(e) => handleChange(e.target)} />
+      <input type="text" placeholder='price' name='price' onChange={(e) => handleChange(e.target)} />
+      <input type="text" placeholder='descripcion' name='descripcion' onChange={(e) => handleChange(e.target)} />
+      <button type="button" onClick={() => createProduct()}>Guardar</button>
+
+      {
+        products.map(item => (
+          <div>
+            <h3>{item.name}</h3>
+            <p>{item.price}</p>
+            <button onClick={() => onDelete(item.id)}>x</button>
+            <button onClick={() => onUpdate(item.id, item.name)}>update</button>
+          </div>
+        ))
+      }
+
       {/* Default */}
       <div>
         <a href="https://vitejs.dev" target="_blank">
