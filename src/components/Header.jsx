@@ -9,10 +9,10 @@ function Header () {
         <Container>
             <Row>
                 <Col>
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQVwSC8JPn6QuOySizaF7fjcceKJXjep92bNA&usqp=CAU" alt="" />
+                    <img class="header-img" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQVwSC8JPn6QuOySizaF7fjcceKJXjep92bNA&usqp=CAU" alt="" />
                 </Col>
                 <Col>
-                    <h1>El sabor en la pizza</h1>
+                    <h1>Pizza Toñito</h1>
                     <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit praesentium atque est illo delectus molestias. Odit numquam praesentium saepe repudiandae et? Molestias atque et pariatur. Sunt, sequi! Blanditiis, porro iure!</p>
                     <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quae, laborum dignissimos? Odit, fugit. Et debitis a aspernatur. Nam amet reiciendis fugiat, nihil velit corrupti impedit eveniet veniam laboriosam nobis enim.</p>
                     <hr />
