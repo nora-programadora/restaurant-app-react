@@ -1,6 +1,4 @@
 import { useState, useEffect } from 'react';
-// import axios from 'axios'
-// import { Button, Card, Col, Container, Row } from 'react-bootstrap';
 import './App.css'
 import {
   onSnapshot,
@@ -8,69 +6,54 @@ import {
   addDoc,
   doc,
   deleteDoc,
-  setDoc,
   updateDoc
 } from 'firebase/firestore';
 import { db } from './firebase';
-import Hello from './components/hello';
 
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
+import Card from 'react-bootstrap/Card';
+import { Link } from 'react-router-dom';
+import Reservaciones from './components/Reservaciones';
+import Hello from './components/hello';
+
 
 function App() {
-  // // Default
-  // const [count, setCount] = useState();
-
-  // // Arreglo
-  // const reservaciones = [
-  //   {
-  //     nombre: 'Fatima',
-  //     edad: 25
-  //   },
-  //   {
-  //     nombre: 'Rebeca',
-  //     edad: 24
-  //   },
-  //   {
-  //     nombre: 'Alan',
-  //     edad: 29
-  //   },
-  //   {
-  //     nombre: 'Rita',
-  //     edad: 29
-  //   },
-
-  // ]
-
-  // // Api
-  // const [joke, setJoke] = useState();
-
-  // const getJoke = async () => {
-  //   const response = await axios('https://api.chucknorris.io/jokes/random')
-  //   console.log('joke', response)
-  //   // setJoke(response.data)
-  // }
-
-  // useEffect(() => {
-  //   getJoke()
-  // }, []);
-
-  // Crud firebase
- 
+  const [products, setProducts] = useState([]);
   const [form, setForm] = useState(null);
 
-  // const createProduct = () => {
-  //   addDoc(collection(db, 'productos'), {
-  //     name: 'camiseta',
-  //     sku: '007',
-  //     price: '345',
-  //     descripcion: 'camiseta'
-  //   })
-  //   getData
-  // }
+  const getData = () => {
+      const arrData = [];
+  
+      onSnapshot(collection(db, 'reservaciones'), (snapshot) => {
+        snapshot.docs.forEach((item) => {
+          console.log('FIREBASE:', item.data())
+  
+          arrData.push({
+            ...item.data(),
+            id: item.id
+          })
+  
+          console.log(arrData);
+          setProducts(arrData);
+        })
+      })
+  }
+
+  const onUpdate = async (id, name) => {
+  console.log(id, name)
+  const newFields = { Nombre: name + ' actualizado '};
+  await updateDoc(doc(db, 'reservaciones', id), newFields)
+  getData()
+  }
+
+
+  const onDelete = async (id) => {
+  console.log(id)
+  await deleteDoc(doc(db, 'reservaciones', id))
+  getData()
+  }
 
   const createProduct = () => {
     if(form) {
@@ -89,6 +72,11 @@ function App() {
     console.log(form)
   }
 
+  useEffect(() => {
+    getData()
+  }, []);
+ 
+
   return (
     <div className="App">
       {/* Firebase */}
@@ -99,16 +87,6 @@ function App() {
       <button type="button" onClick={() => createProduct()}>Registrar</button> */}
 
 
-      {/* Default */}
-      {/* <div className="card">
-        <Button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </Button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-        <Hello name='Nora' />
-      </div> */}
       <Container>
           <Row>
               <Col>
@@ -121,7 +99,6 @@ function App() {
               </Col>
               <Col>
                 <Row>
-                    
                     <label class="label-form">Tu nombre</label>
                     <input type="text" placeholder='Marco Perez' name='Nombre' onChange={(e) => handleChange(e.target)} />
                     <label class="label-form">Tu correo</label>
@@ -136,8 +113,30 @@ function App() {
           </Row>
       </Container>
       
+      <Container>
+        {
+            products.map(item => (
+            <>
+            <Card style={{ width: '18rem' }} key={item.id}>
+                <Card.Body>
+                <Card.Title>Mesa: {item.Mesa}</Card.Title>
+                <Card.Subtitle className="mb-2 text-muted">A nombre de: {item.Nombre}</Card.Subtitle>
+                <button onClick={() => onDelete(item.id)}>x</button>
+                <button onClick={() => onUpdate(item.id, item.Nombre)}>update</button>
+                {/* <Link to={`/components/edit/${item.id}`} >Editar</Link> */}
+                </Card.Body>
+            </Card>
+            </>
+            ))
+        }
+      </Container>
       
-      
+        
+        {/* Props */}
+        <div className="card">
+          <Hello name='Nora' />
+        </div>
+
     </div>
   )
 }
